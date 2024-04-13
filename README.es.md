@@ -1,100 +1,113 @@
-# Parcel template
+**Read in other languages: [Русский](README.md), [Українська](README.ua.md),
+[English](README.en.md), [Español](README.es.md), [Polski](README.pl.md).**
 
-Este proyecto fue creado con Parcel. [Consulte la documentación](https://parceljs.org/).
-para conocer y personalizar las funciones adicionales.
+# Criterios de admisión
 
-## Preparación de un nuevo proyecto
+- Se ha creado el repositorio `goit-js-hw-10`.
+- Al entregar las tareas, existen dos enlaces: a los archivos de origen y el trabajo 
+  en la página de `GitHub Pages`.
+- Al visitar la página de trabajos en vivo, no hay errores ni advertencias en la consola.
+- El proyecto está construido con la ayuda de
+  [parcel-project-template](https://github.com/goitacademy/parcel-project-template).
+- El código es formateado por `Prettier`.
 
-1. Asegúrate de que la versión LTS de Node.js está instalada en tu equipo.
-   [Descárgala e instálala](https://nodejs.org/en/) si es necesario.
-2. Clona este repositorio.
-3. Cambie el nombre de la carpeta con `parcel-project-template` por el nombre de tu proyecto.
-4. Crea un nuevo repositorio vacío en GitHub.
-5. Abre el proyecto en VSCode, ejecuta el terminal y enlaza el proyecto con el repositorio de GitHub
-   [según las instrucciones](https://docs.github.com/en/get-started/getting-started-with-git/managing-remote-repositories#changing-a-remote-repositorys-url).
-6. Instala las dependencias del proyecto en el terminal con el comando `npm install`.
-7. Inicia el modo de desarrollo, ejecutando el comando `npm start`.
-8. Ve a la dirección [http://localhost:1234](http://localhost:1234) en tu navegador.
-   Esta página se recargará automáticamente después de guardar los cambios en los 
-   archivos del proyecto.
+## Archivos de inicio
 
-## Archivos y carpetas
+En la [carpeta src](./src)  encontrará los archivos de inicio. Cópielos en su proyecto,
+reemplazando completamente la carpeta `src` en
+[parcel-project-template](https://github.com/goitacademy/parcel-project-template).
+Para eso, descargue todo el repositorio como un archivo o use el
+[servicio DownGit](https://downgit.github.io/) para descargar una carpeta individual del
+repositorio.
 
-- Todos los partials de los archivos de estilo deben estar en la carpeta `src/sass`
-  y ser importados en los archivos de estilos de la página. Por ejemplo, para
- `index.html` el archivo de estilos se llama `index.scss`.
-- Añade las imágenes a la carpeta `src/images`. El ensamblador las optimizará, 
-  pero sólo cuando se cargue la versión de producción del proyecto. Todo esto
-  se hace en la nube, para no sobrecargar tu ordenador, ya que puede tardar 
-  mucho en máquinas poco potentes.
+## Tarea - búsqueda de países
 
-## Deploy
+Cree la parte del frontend de una aplicación de búsqueda sobre los datos de países por su parte o el
+nombre completo. Mire en
+[vídeo demo](https://user-images.githubusercontent.com/17479434/131147741-7700e8c5-8744-4eea-8a8e-1c3d4635248a.mp4)
+aplicaciones.
 
-Para configurar un proyecto para ser implementado, hay algunos pasos adicionales 
-para configurar tu repositorio. Ve a la pestaña `Settings` y en la subsección
-`Actions`, selecciona la opción `General`.
+### Consultas HTTP
 
-![GitHub actions settings](./assets/actions-config-step-1.png)
+Use la API pública [Rest Countries](https://restcountries.com/), es decir
+[resource name](https://restcountries.com/#api-endpoints-v3-name), que devuelve
+el array de los objetos de los países que cumplen los criterios de búsqueda. Añada un diseño
+mínimo a los elementos de la interfaz.
 
-Baja hasta la última sección, asegurándote de que las opciones esten seleccionadas
-como en la siguiente imagen, y haz clic en `Save`. Sin estas opciones, la compilación
-no tendrá suficientes permisos para automatizar el proceso de implementación.
+Escriba la función `fetchCountries(name)` a cual hace una petición HTTP a
+[ресурс name](https://restcountries.com/#api-endpoints-v3-name) y devuelve
+promise con el array de los países, el resultado de la consulta. Colóquelo en un archivo separado
+`fetchCountries.js` y haga una exportación con nombre.
 
-![GitHub actions settings](./assets/actions-config-step-2.png)
+### Filtración de ámbitos
 
-La versión de producción del proyecto se compilará e implementará automáticamente 
-en GitHub Pages, en la rama `gh-pages`, cada vez que se actualice la rama `main`.
-Por ejemplo, después de un push directo o de un pool request aceptado. Para
-ello, edita el campo `homepage` y el script `build` en el archivo `package.json`,
-sustituyendo `your_username` y `your_repo_name` por los tuyos propios, y envía
-los cambios a GitHub.
+La respuesta del backend devuelve objetos, la mayoría de los cuales no
+ Para poder reducir la cantidad de datos transferidos, añada una secuencia de parámetros
+de consulta, así como este backend implementa el filtrado de los ámbitos. Heche un vistazo a la
+[documentación de la sintaxis del filtro](https://restcountries.com/#filter-response).
 
-```json
-"homepage": "https://your_username.github.io/your_repo_name/",
-"scripts": {
-  "build": "parcel build src/*.html --public-url /your_repo_name/"
-},
-```
+Sólo necesita las siguientes propiedades:
 
-A continuación, hay que ir a la configuración del repositorio de GitHub 
-(`Settings` > `Pages`) y seleccionar que la versión de producción de los archivos
-se distribuya desde la carpeta `/root` de la rama `gh-pages`, si no se hizo automáticamente.
+- `name.official` - nombre completo del país
+- `capital` - capital
+- `population` - población
+- `flags.svg` - enlace a la imagen de la bandera
+- `languages` - array de idiomas
 
-![GitHub Pages settings](./assets/repo-settings.png)
+### Ámbitos de búsqueda
 
-### Estado del deploy
+El nombre del país a buscar es introducido por el usuario en la casilla de texto
+`input#search-box`. Las consultas HTTP se realizan cuando se escribe el nombre del país, es decir, 
+mediante el evento `input`. Pero no puede hacer una consulta cada vez que pulse la tecla
+porque habrá muchas consultas a la vez y se ejecutarán en un orden 
+imprevisible.
 
-El estado del deploy del último commit se indica con un icono junto a su identificador.
+Debe aplicar un truco `Debounce` en el manejador de eventos y hacer
+una petición HTTP `300ms después de que el usuario haya dejado de escribir.
+Use el paquete
+[lodash.debounce](https://www.npmjs.com/package/lodash.debounce).
 
-- **Color amarillo** - el proyecto se está compilando y desplegando.
-- **Color verde** - el deploy se completó con éxito.
-- **Color rojo** - Se ha producido un error durante el linting, la compilación o el deploy.
+Si el usuario borra completamente el campo de búsqueda, no se realiza ninguna petición HTTP,
+y se elimina la marca del listado de países o la información del país.
 
-Se puede ver información de estado más detallada haciendo clic en el icono y 
-en el enlace `Details` de la ventana desplegable.
+Desinfecta la secuencia introducida usando el método `trim()`, esto resolverá el problema si el
+ámbito de entrada sólo tiene espacios o si tiene espacios al principio y al final de la secuencia.
 
-![Deployment status](./assets/status.png)
+### Interfaz
 
-### Página activa
+Si el backend devuelve más de 10 países en la respuesta, la interfaz mostrará la
+notificación de que el nombre debe ser más específico. Para las notificaciones
+use [la biblioteca notiflix](https://github.com/notiflix/Notiflix#readme) y
+la emisión de una secuencia como esta.
+`"Too many matches found. Please enter a more specific name."`.
 
-Después de un tiempo, normalmente un par de minutos, la página activa se puede
-ver en la dirección especificada en la propiedad `homepage`. Por ejemplo, aquí
-está el enlace a la versión activa de este repositorio.
-[https://goitacademy.github.io/parcel-project-template](https://goitacademy.github.io/parcel-project-template).
+![Too many matches alert](./preview/too-many-matches.png)
 
-Si se abre una página en blanco, asegúrese de que no haya errores en la pestaña
-`Console` relacionados con rutas incorrectas a los archivos CSS y JS del proyecto (**404**).
-Lo más probable es que tenga un valor incorrecto para la propiedad `homepage` o el 
-script `build` en el archivo `package.json`.
+Si el backend ha devuelto entre 2 y 10 países, se muestra una lista de 
+los países encontrados. Cada elemento de la lista consta de una bandera y un nombre de país
 
-## ¿Cómo funciona?
+![Country list UI](./preview/country-list.png)
 
-![How it works](./assets/how-it-works.png)
+Si el resultado de la consulta es un array con un país, la interfaz muestra un
+diseño de tarjeta con los datos del país: bandera, nombre, capital, población e 
+idiomas.
 
-1. Después de cada push a la rama `main` del repositorio GitHub, se ejecuta un 
-   script especial (GitHub Action) del archivo `.github/workflows/deploy.yml`.
-2. Todos los archivos del repositorio se copian en el servidor, donde el 
-   proyecto se inicializa y se compila antes de ser desplegado.
-3. Si todos los pasos tienen éxito, la versión de producción compilada de los
-   archivos del proyecto se envía a la rama `gh-pages`. De lo contrario, el
-   registro de ejecución del script indicará cuál es el problema.
+![Country info UI](./preview/country-info.png)
+
+> ⚠️ Suficiente para que la aplicación funcione en la mayoría de los países. Algunos
+> de los países, como `Sudán', puede causar problemas ya que el nombre del país
+> es parte del nombre de otro país, "Sudán del Sur". No tiene que preocuparse por
+> estas excepciones.
+
+### Manejo de errores
+
+Si el usuario introduce un nombre de país que no existe, el backend no devolverá un array vacío 
+sino un error con el código de estado `404`, no encontrado.  Si esto no se gestiona, el 
+usuario nunca sabrá que la búsqueda ha fallado. Añada un
+un aviso `"Oops, there is no country with that name"` en caso de que se produzca un error 
+al usar a [la biblioteca notiflix](https://github.com/notiflix/Notiflix#readme).
+
+![Error alert](./preview/error-alert.png)
+
+> ⚠️ Tenga en cuenta que `fetch` no se considera como un error 404, por lo que debe
+> rechazar explícitamente la promise para que el error pueda ser capturado y manejado.

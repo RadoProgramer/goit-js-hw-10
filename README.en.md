@@ -1,73 +1,69 @@
-# Parcel template
+**Read in other languages: [Русский](README.md), [Українська](README.ua.md), [English](README.en.md), [Español](README.es.md), [Polski](README.pl.md).**
 
-This project was created with Parcel. For familiarization and setting additional features [refer to documentation](https://parceljs.org/).
+# Acceptance criteria
 
-## Preparing a new project
+- `goit-js-hw-10` repository created.
+- In your submitted homework, there are two links: One to your source files and one to your working page on `GitHub Pages`.
+- During live page visits, there are no errors or warnings generated in the console.
+- Project built with [parcel-project-template](https://github.com/goitacademy/parcel-project-template).
+- Code formatted with `Prettier`.
 
-1. Make sure you have an LTS version of Node.js installed on your computer.
-   [Download and install](https://nodejs.org/en/) if needed.
-2. Clone this repository.
-3. Change the folder name from `parcel-project-template` to the name of your project.
-4. Create a new empty GitHub repository.
-5. Open the project in VSCode, launch the terminal and link the project to the GitHub repository
-   [by instructions](https://docs.github.com/en/get-started/getting-started-with-git/managing-remote-repositories#changing-a-remote-repositorys-url).
-6. Install the project's dependencies in the terminal with the `npm install` command.
-7. Start development mode by running the `npm start` command.
-8. Go to [http://localhost:1234](http://localhost:1234) in your browser.
-   This page will automatically reload after saving changes to the project files.
+## Start files
 
-## Files and folders
+In the [src folder](./src), you will find start files. Copy them to your project completely, replacing the `src` folder in [parcel-project-template](https://github.com/goitacademy/parcel-project-template). To do this, download this entire repository as an archive or use the [DownGit service](https://downgit.github.io/) to download a separate folder from the repository.
 
-- All stylesheet parshas should be in the `src/sass` folder and imported into the page stylesheets. For example, for `index.html` the style file is named `index.scss`.
-- Add images to the `src/images` folder. The assembler optimizes them, but only when deploying the production version of the project. All this happens in the cloud so as not to burden your computer, as it can take a long time on weak machines.
+## Task - country search
 
-## Deploy
+Create a front-end part of the application to search for information about countries by their partial or full names. Check out the [demo video](https://user-images.githubusercontent.com/17479434/131147741-7700e8c5-8744-4eea-8a8e-1c3d4635248a.mp4) of the app.
 
-To set up a project deployment, you need to perform a few additional steps to set up your repository. Go to the `Settings` tab and in the `Actions` subsection select the `General` item.
+### HTTP requests
 
-![GitHub actions settings](./assets/actions-config-step-1.png)
+Use the public API [Rest Countries](https://restcountries.com/), namely [resource name](https://restcountries.com/#api-endpoints-v3-name), which returns an array of country objects that match the search criteria. Add at least some decoration to the interface elements.
 
-Scroll the page to the last section, in which make sure the options are selected as in the following image and click `Save`. Without these settings, the build will not have enough rights to automate the deployment process.
+Write a function, `fetchCountries(name)`, that makes an HTTP request to [resource name](https://restcountries.com/#api-endpoints-v3-name) and returns a promise with an array of countries - the result of your request. Move it to a separate file called `fetchCountries.js` and make a named export.
 
-![GitHub actions settings](./assets/actions-config-step-2.png)
+### Field filtering
 
-The production version of the project will be automatically built and deployed to GitHub Pages, in the `gh-pages` branch, every time the `main` branch is updated. For example, after a direct push or an accepted pull request. To do this, you need to edit the `homepage` field and the `build` script in the `package.json` file, replacing `your_username` and `your_repo_name` with your own, and submit the changes to GitHub.
+The back-end returns objects with some properties most of which you do not need. To reduce the amount of data transferred, add a string of request parameters - this is how this back-end implements field filtering. Check out the [filter syntax documentation](https://restcountries.com/#filter-response).
 
+You only need the following properties:
 
-```json
-"homepage": "https://your_username.github.io/your_repo_name/",
-"scripts": {
-  "build": "parcel build src/*.html --public-url /your_repo_name/"
-},
-```
+- `name.official` - full name of the country
+- `capital` - capital
+- `population` - population
+- `flags.svg` - link to flag images
+- `languages` - array of languages
 
-Next, you need to go to the settings of the GitHub repository (`Settings` > `Pages`) and set the distribution of the production version of files from the `/root` folder of the `gh-pages` branch, if this was not done automatically.
+### Search box
 
-![GitHub Pages settings](./assets/repo-settings.png)
+The user enters the name of the country to search for in the `input#search-box` text field. HTTP requests are made by typing the country name, that is, on the `input` event. However, you cannot make a request every time a key is pressed, since many requests will be made at the same time, and they will be executed in an unpredictable order.
 
-### Deployment status
+It is necessary to use the `Debounce` technique on the event handler and make an HTTP request `300ms` after the user has stopped typing text. Use the [lodash.debounce](https://www.npmjs.com/package/lodash.debounce) package.
 
-The deployment status of the latest commit is displayed with an icon next to its ID.
+If the user clears the search box completely, the HTTP request is not executed, and the country list markup or country information disappears.
 
-- **Yellow color** - the project is being built and deployed.
-- **Green color** - deployment completed successfully.
-- **Red color** - an error occurred during linting, build or deployment.
+Sanitize the entered line using the `trim()` method, which will solve the problem when there are only spaces in the input field or at the beginning/end of the line.
 
-More detailed information about the status can be viewed by clicking on the icon, and in the drop-down window, follow the link `Details`.
+### Interface
 
-![Deployment status](./assets/status.png)
+If the back-end returns more than 10 countries, a notification appears in the interface saying that the name should be more specific. For notifications, use the [notiflix library](https://github.com/notiflix/Notiflix#readme) and display this line: `"Too many matches found. Please enter a more specific name."`.
 
-### Live page
+![Too many matches alert](./preview/too-many-matches.png)
 
-After some time, usually a couple of minutes, the live page can be viewed at the address specified in the edited `homepage` property. For example, here is a link to a live version for this repository
-[https://goitacademy.github.io/parcel-project-template](https://goitacademy.github.io/parcel-project-template).
+If the back-end returns from 2 to 10 countries, a list of found countries is displayed under the text field. Each list item consists of a flag and country name.
 
-If a blank page opens, make sure there are no errors in the `Console` tab related to incorrect paths to the CSS and JS files of the project (**404**). Most likely you have the wrong value for the `homepage` property or the `build` script in the `package.json` file.
+![Country list UI](./preview/country-list.png)
 
-## How it works
+If the request results in an array with one country, the interface displays the card markup with information about the country: flag, name, capital, population and languages.
 
-![How it works](./assets/how-it-works.png)
+![Country info UI](./preview/country-info.png)
 
-1. After each push to the `main` branch of the GitHub repository, a special script (GitHub Action) is launched from the `.github/workflows/deploy.yml` file.
-2. All repository files are copied to the server, where the project is initialized and built before deployment.
-3. If all steps are successful, the built production version of the project files is sent to the `gh-pages` branch. Otherwise, the script execution log will indicate what the problem is.
+> ⚠️ It is enough for the app to work for most countries. Some countries, such as `Sudan`, can be problematic because the name of the country is part of the name of another country, `South Sudan`. Do not worry about these exceptions.
+
+## Error handling
+
+If the user enters the name of a country that does not exist, the back-end will return not an empty array, but an error with the status code `404` - not found. If you do not handle this, the user will never know that the search has not returned any results. Add a notification, "Oops, there is no country with that name"`, in case of an error using the [notiflix library](https://github.com/notiflix/Notiflix#readme).
+
+![Error alert](./preview/error-alert.png)
+
+> ⚠️ Remember that `fetch` does not treat 404 as an error, so you need to explicitly reject the promise in order to catch and handle the error.

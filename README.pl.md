@@ -1,103 +1,116 @@
-# Parcel template
+**Read in other languages: [Русский](README.md), [Українська](README.ua.md),
+[English](README.en.md), [Español](README.es.md), [Polski](README.pl.md).**
 
-Ten projekt został stworzony przy pomocy Parcel. W celu zapoznania się i
-skonfigurowania dodatkowych opcji [zobacz dokumentację](https://parceljs.org/)
+# Kryteria przyjęcia
 
-## Przygotowanie nowego projektu
+- Utworzono repozytorium `goit-js-hw-10`.
+- Przy oddaniu pracy domowej dołączono linki: do plików źródłowych i strony
+  roboczej na `GitHub Pages`.
+- Wiersz poleceń nie zawiera błędów i ostrzeżeń.
+- Projekt utworzono z pomocą
+  [parcel-project-template](https://github.com/goitacademy/parcel-project-template).
+- Sformatowano kod `Prettier`.
 
-1. Upewnij się, że na komputerze zainstalowana jest wersja LTS Node.js.
-   [Ściągnij i zainstaluj](https://nodejs.org/en/), jeśli jest taka potrzeba.
-2. Sklonuj to repozytorium.
-3. Zmień nazwę folderu z `parcel-project-template` na nazwę swojego projektu.
-4. Utwórz nowe, puste repozytorium na GitHub.
-5. Otwórz projekt w VSCode, uruchom terminal i zwiąż projekt z repozytorium
-   GitHub
-   [zgodnie z instrukcją](https://docs.github.com/en/get-started/getting-started-with-git/managing-remote-repositories#changing-a-remote-repositorys-url).
-6. Utwórz zależność projektu w terminalu przez polecenie `npm install` .
-7. Włącz tryb edycji, wykonując polecenie `npm start`.
-8. Przejdź w przeglądarce pod adres
-   [http://localhost:1234](http://localhost:1234). Ta strona będzie się
-   automatycznie odświeżać po dokonaniu zmian w plikach projektu.
+## Pliki startowe
 
-## Pliki i foldery
+W [folderze src](./src) znajdziesz pliki startowe. Skopiuj je do swojego
+projektu, całkowicie zamieniając folder `src` w
+[parcel-project-template](https://github.com/goitacademy/parcel-project-template).
+Aby to zrobić, pobierz całe repozytorium jako archiwum lub użyj
+[serwisu DownGit](https://downgit.github.io/) aby pobrać oddzielny folder z
+repozytorium.
 
-- Wszystkie partiale plików stylów powinny znajdować się w folderze `src/sass` i
-  importować się w pliki stylów stron. Na przykład dla `index.html` plik stylów
-  nazywa się `index.scss`.
-- Obrazy dodawaj do pliku `src/images`. Moduł zbierający optymalizuje je, ale
-  tylko przy deploymencie wersji produkcyjnej projektu. Wszystko to zachodzi w
-  chmurze, aby nie obciążać twojego komputera, ponieważ na słabszym sprzęcie
-  może to zająć sporo czasu.
+## Zadanie - wyszukiwanie krajów
 
-## Deployment
+Utwórz frontend aplikacji wyszukiwania danych o kraju według częściowej lub
+pełnej nazwy.
 
-Aby skonfigurować deployment projektu należy wykonać kilka dodatkowych kroków
-konfigurowania twojego repozytorium. Wejdź w zakładkę `Settings` i w podsekcji
-`Actions` wybierz punkt `General`.
+https://user-images.githubusercontent.com/17479434/131147741-7700e8c5-8744-4eea-8a8e-1c3d4635248a.mp4
 
-![GitHub actions settings](./assets/actions-config-step-1.png)
+### Żądanie HTTP
 
-Przejdź do ostatniej sekcji, w której upewnij się, że wybrane opcje są takie
-same jak na następnym obrazku i kliknij `Save`. Bez tych ustawień w module
-zbierającym będzie zbyt mało pozwoleń dla automatyzacji procesu deploymentu.
+Użyj publicznego API [Rest Countries v2](https://restcountries.com/), a
+dokładniej [nazwa źródła](https://restcountries.com/#api-endpoints-v3-name),
+który przekazuje tablicę obiektów krajów odpowiadających kryteriom wyszukiwania.
+Popraw wizualnie elementy interfejsu.
 
-![GitHub actions settings](./assets/actions-config-step-2.png)
+Napisz funkcję `fetchCountries(name)` która tworzy żądanie HTTP na
+[nazwa źródła](https://restcountries.com/#api-endpoints-v3-name) i przekazuje
+obietnicę z tablicą krajów - wynikiem żądania. Przenieś ją do oddzielnego pliku
+`fetchCountries.js` i utwórz eksport nazwany.
 
-Wersja produkcyjna projektu będzie automatycznie gromadzić się i deployować na
-GitHub Pages w gałęzi `gh-pages` za każdym razem, gdy aktualizuje się gałąź
-`main`. Na przykład po bezpośrednim pushu lub przyjętym pull requeście. W tym
-celu niezbędne jest, aby w pliku `package.json` wyedytować pole `homepage` i
-skrypt `build`, zamieniając `your_username` i `your_repo_name` na swoje nazwy i
-wysłać zmiany na GitHub.
+### Filtrowanie pól
 
-```json
-"homepage": "https://your_username.github.io/your_repo_name/",
-"scripts": {
-  "build": "parcel build src/*.html --public-url /your_repo_name/"
-},
-```
+W odpowiedzi, z backendu przekazywane są obiekty, których większość właściwości
+nie przyda Ci się. Aby zredukować zakres przekazywanych danych, dodaj ciąg
+parametrów żądania - w taki sposób backend realizuje filtrację pól. Zapoznaj się
+z [dokumentacją składni filtrów](https://restcountries.com/#filter-response).
 
-Dalej należy wejść w ustawienia repozytorium GitHub (`Settings` > `Pages`) i
-wystawić dystrybucję wersji produkcyjnej z folderu `/root` gałęzi `gh-pages`,
-jeśli nie zrobiło się to automatycznie.
+Potrzebujesz tylko następujących właściwości:
 
-![GitHub Pages settings](./assets/repo-settings.png)
+- `name.official` - pełna nazwa kraju
+- `capital` - stolica
+- `population` - liczba ludności
+- `flags.svg` - link do ilustracji przedstawiającej flagę
+- `languages` - tablica języków
 
-### Status deploymentu
+### Pole wyszukiwania
 
-Status deploymentu ostatniego commitu wyświetla się na ikonie obok jego
-identyfikatora.
+Nazwę kraju, którą chce wyszukać użytkownik, wprowadza się w pole tekstowe
+`input#search-box`. Żądania HTTP realizuje się przy komplecie nazw krajów, czyli
+po zdarzeniu `input`. Jednak nie należy spełniać żądania po każdym kliknięciu
+przycisku, ponieważ otrzymamy jednocześnie wiele żądań, które zostaną spełnione
+w nieprzewidywalnym porządku.
 
-- ** Żółty kolor** - wykonuje się zbudowanie i deployment projektu.
-- ** Zielony kolor** - deployment zakończył się sukcesem.
-- ** Czerwony kolor** - w czasie lintingu, budowania lub deplymentu pojawił się
-  błąd.
+Koniecznym jest zastosowanie funkcji `Debounce` na event handler i wykonanie
+żądania HTTP `300ms` po tym, jak użytkownik przestał wprowadzać tekst. Użyj
+pakietu [lodash.debounce](https://www.npmjs.com/package/lodash.debounce).
 
-Więcej informacji o statusie można zobaczyć klikając na ikonkę i w wyskakującym
-oknie przejść do odnośnika `Details`.
+Jeśli użytkownik całkowicie usuwa pole wyszukiwania, to żądanie HTTP nie zostaje
+zrealizowane, a znacznik listy krajów lub informacji o kraju znika.
 
-![Deployment status](./assets/status.png)
+Dokonaj sanityzacji wprowadzonego ciągu metodą `trim()`, to rozwiąże problem,
+gdy w polu wprowadzania są tylko spacje lub widnieją one na początku i na końcu
+wiersza.
 
-### Działająca strona
+### Interfejs
 
-Po jakimś czasie, zazwyczaj kilku minut, działającą stronę będzie można zobaczyć
-pod adresem wskazanym w wyedytowanej właściwości `homepage`. Na przykład tu
-znajduje się odnośnik do działającej strony dla tego repozytorium
-[https://goitacademy.github.io/parcel-project-template](https://goitacademy.github.io/parcel-project-template).
+Jeśli w odpowiedzi backend przekazał więcej niż 10 krajów, w interfejsie pojawia
+się powiadomienie o tym, że nazwa powinna być bardziej specyficzna. Do
+powiadomień używaj
+[biblioteki notiflix](https://github.com/notiflix/Notiflix#readme) i wprowadź
+taki wiersz `"Too many matches found. Please enter a more specific name."`.
 
-Jeżeli otwiera się pusta strona, upewnij się, że w zakładce `Console` nie ma
-błędów związanych z nieprawidłowymi ścieżkami do plików projektu CSS i JS
-(**404**). Najprawdopodobniej wprowadzona została nieprawidłowa wartość
-właściwości `homepage` lub skryptu `build` w pliku `package.json`.
+![Too many matches alert](./preview/too-many-matches.png)
 
-## Jak to działa
+Jeśli backend przekazał od 2-óch do 10-ciu krajów, pod polem tekstowym pojawia
+się lista znalezionych krajów. Każdy element listy składa się z flagi i nazwy
+kraju.
 
-![How it works](./assets/how-it-works.png)
+![Country list UI](./preview/country-list.png)
 
-1. Po każdym pushu w gałęzi `main` repozytorium GitHub, włącza się specjalny
-   skrypt (GitHub Action) z pliku `.github/workflows/deploy.yml`.
-2. Wszystkie pliki repozytorium kopiują się na serwer, gdzie projekt
-   inicjalizuje się i buduje przed deploymentem.
-3. Jeżeli wszystkie kroki zakończyły się sukcesem, zbudowana wersja produkcyjna
-   plików projektu wysyła się w gałąź `gh-pages`. W przeciwnym razie, w logu
-   wykonania skryptu wskazane zostanie, w czym jest problem.
+Jeśli wynik żądania to tablica z jednym krajem, w interfejsie pojawia się
+znacznik karty z danymi o kraju: flaga, nazwa, stolica, liczba ludności i
+języki.
+
+![Country info UI](./preview/country-info.png)
+
+> ⚠️ Wystarczy, jeśli aplikacja będzie działała dla większości krajów. Niektóre
+> kraje, takie jak `Sudan`, mogą powodować problemy, ponieważ nazwa kraju jest
+> częścią nazwy innego kraju, `South Sudan`. Nie należy się skupiać na tych
+> wyjątkach.
+
+### Przetwarzanie błędu
+
+Jeśli użytkownik wprowadził nazwę kraju, który nie istnieje, backend przekaże
+nie pustą tablicę, a błąd z kodem stanu `404` - nie znaleziono. Jeśli tego nie
+opracujesz, to użytkownik nigdy nie dowie się o tym, że żądanie nie przyniosło
+wyników. Dodaj powiadomienie `"Oops, there is no country with that name"` w
+razie błędu, używając
+[biblioteki notiflix](https://github.com/notiflix/Notiflix#readme).
+
+![Error alert](./preview/error-alert.png)
+
+> ⚠️ Nie zapominaj o tym, że `fetch` nie postrzega 404 jako błędu, dlatego
+> konieczne jest widoczne odrzucenie obietnicy, aby można było wyłapać i
+> przetworzyć błąd.
